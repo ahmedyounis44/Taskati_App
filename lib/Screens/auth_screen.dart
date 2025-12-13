@@ -72,7 +72,6 @@ class _AuthScreenState extends State<AuthScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  /// EMAIL
                   TextFormField(
                     controller: NameController,
                     decoration: const InputDecoration(
