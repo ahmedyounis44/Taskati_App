@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_tasks_app/Screens/home_screen.dart';
 import 'package:flutter_tasks_app/Services/validator_service.dart';
-import 'package:flutter_tasks_app/Widgets/customButton.dart';
+import 'package:flutter_tasks_app/Widgets/custombutton.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -27,6 +28,11 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {});
   }
 
+  /*@override
+  void initState() {
+   super.initState();
+  }*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,19 +56,17 @@ class _AuthScreenState extends State<AuthScreen> {
                     radius: 100,
                     backgroundImage: Image.file(File(photo?.path ?? "")).image,
                   ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Custombutton(
               name: "Upload From Camera",
-              onPressed: () {
-                getImageFromCamera();
-              },
+
+              onPressed: getImageFromCamera,
             ),
             SizedBox(height: 20),
             Custombutton(
               name: "Upload From Gallery",
-              onPressed: () {
-                getImageFromGallery();
-              },
+
+              onPressed: getImageFromGallery,
             ),
 
             SizedBox(height: 30),
@@ -73,10 +77,14 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 children: [
                   TextFormField(
+                    onTapOutside: (value) {
+                      FocusScope.of(context).unfocus();
+                    },
                     controller: NameController,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                       border: OutlineInputBorder(),
+                      hint: Text("Enter Your Name"),
                     ),
                     keyboardType: TextInputType.name,
                     validator: ValidatorService.validateName,
@@ -84,6 +92,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   const SizedBox(height: 20),
 
+                  // ignore: void_checks
                   Custombutton(name: "Done", onPressed: _submitForm),
                 ],
               ),
@@ -96,8 +105,16 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of( context,).showSnackBar(const SnackBar(content: Text('Form is valid'),
-       duration: Duration(seconds: 3),));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Form is valid'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
     }
   }
 }

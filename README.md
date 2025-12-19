@@ -10,3 +10,6 @@ Auth Screen
 
 ![alt text](Screenshot_1765635827.png)
 
+Home Screen
+
+![alt text](Capture3235.PNG)
