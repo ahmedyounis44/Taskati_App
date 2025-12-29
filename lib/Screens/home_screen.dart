@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tasks_app/Screens/add_task_screen.dart';
 import 'package:flutter_tasks_app/Widgets/datecard.dart';
 import 'package:flutter_tasks_app/Widgets/taskcard.dart';
 
@@ -63,7 +64,11 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => AddTaskScreen()),
+                      );
+                    },
                     child: Text(
                       '+ Add Task',
                       style: TextStyle(color: Colors.white),

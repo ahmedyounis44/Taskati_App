@@ -46,7 +46,27 @@ class ValidatorService{
   }
 
 
+static String? validateTitle(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter title';
+    }
+    final nameRegex = RegExp(r"^[a-zA-Z\s]+$");
+    if (!nameRegex.hasMatch(value)) {
+      return 'Title can only contain letters and spaces';
+    }
+    return null;
+  }
 
 
+static String? validateDes(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter descrption';
+    }
+    final nameRegex = RegExp(r"^[a-zA-Z1-9\s]+$");
+    if (!nameRegex.hasMatch(value)) {
+      return 'Descrption can only contain letters,Numbers and spaces';
+    }
+    return null;
+  }
 
 }

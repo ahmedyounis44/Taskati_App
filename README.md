@@ -13,3 +13,8 @@ Auth Screen
 Home Screen
 
 ![alt text](Capture3235.PNG)
+
+Add Task Screen
+
+![alt text](image.png)
+
