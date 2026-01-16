@@ -3,6 +3,7 @@ import 'package:flutter_tasks_app/Services/validator_service.dart';
 import 'package:flutter_tasks_app/Widgets/task_color.dart';
 import 'package:flutter_tasks_app/Widgets/task_lable.dart';
 import 'package:flutter_tasks_app/Widgets/task_textfield.dart';
+import 'package:flutter_tasks_app/models/task_model.dart';
 
 class AddTaskScreen extends StatefulWidget {
  const  AddTaskScreen({super.key});
@@ -19,6 +20,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final dateCtrl = TextEditingController(text: '2025-05-17');
   final startTimeCtrl = TextEditingController(text: '09:08 PM');
   final endTimeCtrl = TextEditingController(text: '09:08 PM');
+
+   TimeOfDay stime=TimeOfDay.now(), etime=TimeOfDay.now();
+
+
+ final colorsList = [
+   Colors.blue,
+   Colors.orange,
+   Colors.pink,
+    ];
 
   int selectedColor = 0;
  final _formKey=GlobalKey<FormState>();
@@ -71,7 +81,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   suffixIcon: const Icon(Icons.calendar_today),
                   onTap: () {
                     showDatePicker(context: context, firstDate: DateTime.now(), 
-                    lastDate: DateTime.now().add(Duration(days: 90)));
+                    lastDate: DateTime.now().add(Duration(days: 90))).then( (value) {
+                      if (value != null) {
+                        dateCtrl.text =
+                            '${value.day.toString().padLeft(2, '0')}-${value.month.toString().padLeft(2, '0')}-${value.year}';
+                      }
+                    });
                   },
                 ),
                 
@@ -89,7 +104,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                             readOnly: true,
                             suffixIcon: const Icon(Icons.access_time),
                             onTap: () {
-                              showTimePicker(context: context, initialTime:TimeOfDay.now());
+                              showTimePicker(context: context, initialTime:TimeOfDay.now()).then((value) {
+                                if (value != null) {
+                                  stime=value;
+                                  final hour = value.hourOfPeriod.toString().padLeft(2, '0');
+                                  final minute = value.minute.toString().padLeft(2, '0');
+                                  final period = value.period == DayPeriod.am ? 'AM' : 'PM';
+                                  startTimeCtrl.text = '$hour:$minute $period';
+                                }
+                              });
                             },
                           ),
                         ],
@@ -107,7 +130,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                             readOnly: true,
                             suffixIcon: const Icon(Icons.access_time),
                             onTap: () {
-                              showTimePicker(context: context, initialTime:TimeOfDay.now());
+                              showTimePicker(context: context, initialTime:TimeOfDay.now()).then((value) {
+                                if (value != null) {
+                                  etime=value;
+                                  final hour = value.hourOfPeriod.toString().padLeft(2, '0');
+                                  final minute = value.minute.toString().padLeft(2, '0');
+                                  final period = value.period == DayPeriod.am ? 'AM' : 'PM';
+                                  endTimeCtrl.text = '$hour:$minute $period';
+                                }
+                              });
                             },
                           ),
                         ],
@@ -120,13 +151,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 TaskLable(text: 'Color'),
                 Row(
                   children: List.generate(3, (index) {
-                    final colors = [
-                      Colors.blue,
-                      Colors.orange,
-                      Colors.pink,
-                    ];
+                   
                 
-                  return  TaskColor(color: colors[index] ,
+                  return  TaskColor(color: colorsList[index] ,
                     selectedColor: selectedColor == index,
                     onTap: () {
                       setState(() => selectedColor = index);
@@ -165,15 +192,39 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
  void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
+     
+      if (stime.hour>etime.hour || (stime.hour==etime.hour && stime.minute>=etime.minute)) {
+        showDialog(context: context, builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("End time must be after start time"),
+        ),);
+        return; 
+      }
+
+       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Form is valid'),
           duration: Duration(seconds: 3),
         ),
+
       );
 
-     
+
+       tasks.add(TaskModel(
+          taskTitle: titleCtrl.text,
+          statusText: "Todo",
+          description: descCtrl.text,
+          date: dateCtrl.text,
+          startTime: startTimeCtrl.text,
+          endTime: endTimeCtrl.text,
+          color: colorsList[selectedColor],
+        ));
+
+      Navigator.of(context).pop();
     }
   }
 
 }
+    
+  
+

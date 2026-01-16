@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tasks_app/Screens/add_task_screen.dart';
 import 'package:flutter_tasks_app/Widgets/datecard.dart';
 import 'package:flutter_tasks_app/Widgets/taskcard.dart';
+import 'package:flutter_tasks_app/models/task_model.dart';
+import 'package:lottie/lottie.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +71,13 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context).push(
+                    onPressed: () async {
+                     await Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => AddTaskScreen()),
                       );
+                      setState(() {
+                        
+                      });
                     },
                     child: Text(
                       '+ Add Task',
@@ -102,28 +112,20 @@ class HomeScreen extends StatelessWidget {
 
               /// Tasks
               Expanded(
-                child: ListView(
-                  children: [
-                    TaskCard(
-                      title: 'Flutter Task - 1',
-                      des: "I Will do This Task",
-                      time: '02:25 AM - 02:40 AM',
-                      color: Color(0xFF5B6CFF),
-                    ),
-                    TaskCard(
-                      title: 'Flutter Task - 2',
-                      time: '04:27 PM - 04:42 PM',
-                      des: "I Will do This Task",
-                      color: Color(0xFFFF4D6D),
-                    ),
-                    TaskCard(
-                      title: 'Flutter Task - 3',
-                      time: '07:27 PM - 09:43 PM',
-                      des: "I Will do This Task",
-                      color: Color(0xFFFFA26B),
-                    ),
-                  ],
-                ),
+                child:Visibility(visible: tasks.isEmpty,  replacement:  ListView.separated(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) => TaskCard(
+                    title: tasks[index].taskTitle,
+                    des: tasks[index].description,
+                    time: ("${tasks[index].startTime} - ${tasks[index].endTime}"),
+                    color: tasks[index].color,
+                  ),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                
+                ),child: Lottie.asset("assets/images/nodata.json"))
+                
               ),
             ],
           ),
