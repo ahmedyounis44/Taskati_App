@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tasks_app/Screens/home_screen.dart';
 import 'package:flutter_tasks_app/Services/validator_service.dart';
 import 'package:flutter_tasks_app/Widgets/custombutton.dart';
+import 'package:flutter_tasks_app/app_strings.dart';
+import 'package:flutter_tasks_app/models/user_model.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -16,8 +19,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final ImagePicker picker = ImagePicker();
   XFile? photo;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController NameController = TextEditingController();
-
+  final TextEditingController nameController = TextEditingController();
+  Box<UserModel> userBox = Hive.box<UserModel>(AppStrings.userBox);
   void getImageFromCamera() async {
     photo = await picker.pickImage(source: ImageSource.camera);
     setState(() {});
@@ -80,7 +83,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     onTapOutside: (value) {
                       FocusScope.of(context).unfocus();
                     },
-                    controller: NameController,
+                    controller: nameController,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                       border: OutlineInputBorder(),
@@ -103,18 +106,37 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (photo == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select an image'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+
+      /*ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Form is valid'),
           duration: Duration(seconds: 3),
         ),
-      );
+      );*/
+      await userBox.clear();
 
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+      userBox
+          .add(UserModel(name: nameController.text, image: photo?.path ?? ""))
+          .then((value) {
+            print("user added with id: $value");
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          })
+          .catchError((error) {
+            print("Failed to add user: $error");
+          });
     }
   }
 }

@@ -1,15 +1,26 @@
-import 'package:flutter/widgets.dart';
+import 'package:hive_flutter/adapters.dart';
 
-class TaskModel {
+// This MUST be uncommented for the generator to work
+part 'task_model.g.dart'; 
+
+@HiveType(typeId: 1)
+class TaskModel extends HiveObject {
+  @HiveField(0)
   String taskTitle;
+  @HiveField(1)
   String date;
+  @HiveField(2)
   String startTime;
+  @HiveField(3)
   String endTime;
+  @HiveField(4)
   String description;
+  @HiveField(5)
   String statusText;
-  Color color;
+  @HiveField(6)
+  int color;
 
-TaskModel({
+  TaskModel({
     required this.taskTitle,
     required this.date,
     required this.startTime,
@@ -19,7 +30,7 @@ TaskModel({
     required this.color,
   });
 }
-  List<TaskModel> tasks = [
+ List<TaskModel> tasks = [
     /*TaskModel(
       taskTitle: 'Client Presentation',
       date: '2024-06-17',
