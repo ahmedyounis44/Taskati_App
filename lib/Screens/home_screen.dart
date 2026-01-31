@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tasks_app/Screens/add_task_screen.dart';
+import 'package:flutter_tasks_app/Screens/auth_screen.dart';
 import 'package:flutter_tasks_app/Widgets/datecard.dart';
 import 'package:flutter_tasks_app/Widgets/taskcard.dart';
+import 'package:flutter_tasks_app/app_strings.dart';
 import 'package:flutter_tasks_app/models/task_model.dart';
+import 'package:flutter_tasks_app/models/user_model.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,9 +18,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
+
 class _HomeScreenState extends State<HomeScreen> {
+ UserModel? currentUser = Hive.box<UserModel>(AppStrings.userBox).getAt(0);
+
   @override
   Widget build(BuildContext context) {
+     List<TaskModel> tasks = Hive.box<TaskModel>(AppStrings.taskBox).values.toList();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -25,27 +36,35 @@ class _HomeScreenState extends State<HomeScreen> {
               /// Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hello, Sayed',
-                        style: TextStyle(
+                        'Hello, ${currentUser?.name??""}',
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF5B6CFF),
                         ),
                       ),
-                      Text('Have A Nice Day.'),
+                      const Text('Have A Nice Day.'),
                     ],
                   ),
+                  SizedBox(width: 120,),
                   CircleAvatar(
                     radius: 22,
-                    backgroundImage: NetworkImage(
-                      'https://scontent.fmct5-1.fna.fbcdn.net/v/t1.6435-9/82853971_1994220057390256_3920460651893358592_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=w7AEHDRKv3gQ7kNvwFsDdof&_nc_oc=AdkkYI1o-15q1_8lgIUdW6rHtZcV-tdHsIE0wZGYrDQ61P2FtrhZzPe7i-oAQ6BOqsWOiDKA698C-qT8UAG9jUlw&_nc_zt=23&_nc_ht=scontent.fmct5-1.fna&_nc_gid=F8lneMPwPSrme1Dkl1CTvA&oh=00_AflfWvHxHDTa8kLfzFfzhmM-SZ_QmG9yGtgE_29xPXML1g&oe=696D1BE8',
+                    backgroundImage: Image.file(File(currentUser?.image ?? "")).image,
                     ),
-                  ),
+
+                    IconButton(onPressed: () {
+                      Hive.box<UserModel>(AppStrings.userBox).clear();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => AuthScreen()),
+                        (route) => false,
+                      );
+                    }, icon: Icon(Icons.logout,color: Colors.red,))
+                  
                 ],
               ),
 
@@ -118,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: tasks[index].taskTitle,
                     des: tasks[index].description,
                     time: ("${tasks[index].startTime} - ${tasks[index].endTime}"),
-                    color: tasks[index].color,
+                    color: Color(tasks[index].color),
                   ),
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

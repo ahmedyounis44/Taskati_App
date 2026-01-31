@@ -4,6 +4,7 @@ import 'package:flutter_tasks_app/Widgets/task_color.dart';
 import 'package:flutter_tasks_app/Widgets/task_lable.dart';
 import 'package:flutter_tasks_app/Widgets/task_textfield.dart';
 import 'package:flutter_tasks_app/models/task_model.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class AddTaskScreen extends StatefulWidget {
  const  AddTaskScreen({super.key});
@@ -208,17 +209,28 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
 
       );
-
-
-       tasks.add(TaskModel(
+ 
+      Hive.box<TaskModel>("task").add(
+       TaskModel(
           taskTitle: titleCtrl.text,
           statusText: "Todo",
           description: descCtrl.text,
           date: dateCtrl.text,
           startTime: startTimeCtrl.text,
           endTime: endTimeCtrl.text,
-          color: colorsList[selectedColor],
-        ));
+          color: (colorsList[selectedColor].toARGB32()),
+        )
+        );
+
+       /*tasks.add(TaskModel(
+          taskTitle: titleCtrl.text,
+          statusText: "Todo",
+          description: descCtrl.text,
+          date: dateCtrl.text,
+          startTime: startTimeCtrl.text,
+          endTime: endTimeCtrl.text,
+          color: colorsList[selectedColor].hashCode,
+        ));*/
 
       Navigator.of(context).pop();
     }
