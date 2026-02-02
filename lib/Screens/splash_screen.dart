@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tasks_app/Screens/auth_screen.dart';
-import 'package:flutter_tasks_app/Screens/home_screen.dart';
+import 'package:flutter_tasks_app/screens/auth_screen.dart';
+import 'package:flutter_tasks_app/screens/home_screen.dart';
 import 'package:flutter_tasks_app/app_strings.dart';
 import 'package:flutter_tasks_app/models/user_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';

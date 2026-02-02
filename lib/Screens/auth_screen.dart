@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_tasks_app/Screens/home_screen.dart';
-import 'package:flutter_tasks_app/Services/validator_service.dart';
-import 'package:flutter_tasks_app/Widgets/custombutton.dart';
+import 'package:flutter_tasks_app/screens/home_screen.dart';
+import 'package:flutter_tasks_app/services/validator_service.dart';
+import 'package:flutter_tasks_app/widgets/custombutton.dart';
 import 'package:flutter_tasks_app/app_strings.dart';
 import 'package:flutter_tasks_app/models/user_model.dart';
 import 'package:hive_flutter/adapters.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tasks_app/Services/validator_service.dart';
-import 'package:flutter_tasks_app/Widgets/task_color.dart';
-import 'package:flutter_tasks_app/Widgets/task_lable.dart';
-import 'package:flutter_tasks_app/Widgets/task_textfield.dart';
+import 'package:flutter_tasks_app/services/validator_service.dart';
+import 'package:flutter_tasks_app/widgets/task_color.dart';
+import 'package:flutter_tasks_app/widgets/task_lable.dart';
+import 'package:flutter_tasks_app/widgets/task_textfield.dart';
 import 'package:flutter_tasks_app/models/task_model.dart';
 import 'package:hive_flutter/adapters.dart';
 

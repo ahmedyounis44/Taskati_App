@@ -5,41 +5,48 @@ class DateCard extends StatelessWidget {
   final String month;
   final String week;
   final bool active;
+  final void Function()? onTap;
 
   const DateCard({
     super.key,
     required this.day,
     required this.month,
     required this.week,
+     required this.onTap,
     this.active = false,
+  
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 90,
-      decoration: BoxDecoration(
-        color: active ? const Color(0xFF5B6CFF) : Colors.white,
-        borderRadius: BorderRadius.circular(15),
+    return InkWell(
+        onTap: onTap,
+      child: Container(
+        width: 90,
+        decoration: BoxDecoration(
+          color: active ? const Color(0xFF5B6CFF) : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(month,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: active ? Colors.white : Colors.black)),
+            Text(day,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: active ? Colors.white : Colors.black)),
+            Text(week,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: active ? Colors.white : Colors.black)),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(month,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: active ? Colors.white : Colors.black)),
-          Text(day,
-              style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: active ? Colors.white : Colors.black)),
-          Text(week,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: active ? Colors.white : Colors.black)),
-        ],
-      ),
+    
     );
   }
 }

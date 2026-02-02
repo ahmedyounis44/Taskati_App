@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tasks_app/Screens/splash_screen.dart';
+import 'package:flutter_tasks_app/screens/splash_screen.dart';
 
 class TaskatiApp extends StatelessWidget {
   const TaskatiApp({super.key});

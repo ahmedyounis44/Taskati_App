@@ -5,6 +5,7 @@ class TaskCard extends StatelessWidget {
   final String time;
   final Color color;
   final String des;
+  final String statusText;
 
   const TaskCard({
     super.key,
@@ -12,6 +13,7 @@ class TaskCard extends StatelessWidget {
     required this.time,
     required this.color,
     required this.des,
+    required this.statusText,
   });
 
   @override
@@ -58,9 +60,9 @@ class TaskCard extends StatelessWidget {
                 ),
               ),
               VerticalDivider(color: Colors.white, thickness: 2),
-              const RotatedBox(
+               RotatedBox(
                 quarterTurns: 3,
-                child: Text('TODO', style: TextStyle(color: Colors.white)),
+                child: Text(statusText.toUpperCase(), style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
