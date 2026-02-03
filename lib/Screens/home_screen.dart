@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  UserModel? currentUser = Hive.box<UserModel>(AppStrings.userBox).getAt(0);
+  UserModel? currentUser;
   int indexSelected = 0;
   int dateindexSelected = 0;
   DateTime today = DateTime.now();
@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    currentUser = Hive.box<UserModel>(AppStrings.userBox).getAt(0);
     tasks = Hive.box<TaskModel>(AppStrings.taskBox).values
         .where(
           (task) =>
@@ -75,9 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   InkWell(
                     onTap: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>  UserScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => UserScreen()),
                       );
                     },
                     child: CircleAvatar(
@@ -138,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-
+              const SizedBox(height: 20),
               SizedBox(
                 height: 40,
                 child: Row(
@@ -177,29 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               /// Dates
               const SizedBox(height: 20),
-              /* SizedBox(
-                height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    DateCard(
-                      day: '30',
-                      month: 'OCT',
-                      week: 'MON',
-                      active: true,
-                      onTap: () {},
-                    ),
-                    DateCard(
-                      day: '31',
-                      month: 'OCT',
-                      week: 'TUE',
-                      onTap: () {},
-                    ),
-                    DateCard(day: '1', month: 'NOV', week: 'WED', onTap: () {}),
-                    DateCard(day: '2', month: 'NOV', week: 'THU', onTap: () {}),
-                  ],
-                ),
-              ),*/
+
               SizedBox(
                 height: 120,
                 child: ListView.builder(
@@ -232,14 +209,56 @@ class _HomeScreenState extends State<HomeScreen> {
                   visible: tasks.isEmpty,
                   replacement: ListView.separated(
                     itemCount: tasks.length,
-                    itemBuilder: (context, index) => TaskCard(
-                      title: tasks[index].taskTitle,
-                      des: tasks[index].description,
-                      statusText: tasks[index].statusText,
-                      time:
-                          ("${tasks[index].startTime} - ${tasks[index].endTime}"),
-                      color: Color(tasks[index].color),
-                    ),
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                        key: UniqueKey(),
+                        onDismissed: (direction) {
+                          if (direction == DismissDirection.startToEnd) {
+                            // Delete the task
+                            setState(() {
+                              //Hive.box<TaskModel>(AppStrings.taskBox).clear();
+                              Hive.box<TaskModel>(
+                                AppStrings.taskBox,
+                              ).deleteAt(index);
+                            });
+                          } else if (direction == DismissDirection.endToStart) {
+                            // Update the task
+                            TaskModel task = tasks[index];
+                            task.statusText = task.statusText = 'Completed';
+                            Hive.box<TaskModel>(
+                              AppStrings.taskBox,
+                            ).putAt(index, task);
+                          }
+
+                          // Show a message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Task dismissed')),
+                          );
+                        },
+                        background: Container(
+                          color: Colors.red, // Background color when swiped
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(left: 20),
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
+
+                        secondaryBackground: Container(
+                          color: Colors.blue,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Icon(Icons.edit_note_sharp, color: Colors.white),
+                        ),
+                        child: TaskCard(
+                          title: tasks[index].taskTitle,
+                          des: tasks[index].description,
+                          statusText: tasks[index].statusText,
+                          time:
+                              ("${tasks[index].startTime} - ${tasks[index].endTime}"),
+                          color: Color(tasks[index].color),
+                        ),
+                      );
+                    },
+
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     separatorBuilder: (context, index) =>
@@ -253,22 +272,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  void updatelist(selectedstatusText, selecteddate) {
-    tasks = Hive.box<TaskModel>(AppStrings.taskBox).values
-        .where(
-          (task) =>
-              task.statusText ==
-              (selectedstatusText == 'All'
-                  ? task.statusText
-                  : selectedstatusText),
-        )
-        .where(
-          (task2) =>
-              task2.date ==
-              '${selecteddate.day.toString().padLeft(2, '0')}-${selecteddate.month.toString().padLeft(2, '0')}-${selecteddate.year}',
-        )
-        .toList();
   }
 }
